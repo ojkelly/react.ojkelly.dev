@@ -1,0 +1,21 @@
+{
+  "name": "useform.dev",
+  "version": "0.9.0",
+  "description": "A Typescript react hook form library",
+  "main": "src/index.ts",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ojkelly/useform.dev.git"
+  },
+  "author": "Owen Kelly <owen@owenkelly.com.au>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ojkelly/useform.dev/issues"
+  },
+  "homepage": "https://github.com/ojkelly/useform.dev#readme"
+}
