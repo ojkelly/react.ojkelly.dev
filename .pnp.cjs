@@ -1520,7 +1520,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:c7e34a98768dbd5d68da1aa06ad9f8ac74402f088b57cc33bb9e97be23559a6494295126db6f4f41f202085c8ec32b06605cba84816412b3c27e6ee2ca3ccbfd#npm:12.0.0"],
             ["@babel/runtime", "npm:7.14.6"],
             ["@testing-library/dom", "npm:8.1.0"],
-            ["@types/react", null],
+            ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:c7e34a98768dbd5d68da1aa06ad9f8ac74402f088b57cc33bb9e97be23559a6494295126db6f4f41f202085c8ec32b06605cba84816412b3c27e6ee2ca3ccbfd#npm:17.0.2"]
@@ -8123,7 +8123,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/react-dom-virtual-f3fcf033fe/0/cache/react-dom-npm-17.0.2-f551215af1-1c1eaa3bca.zip/node_modules/react-dom/",
           "packageDependencies": [
             ["react-dom", "virtual:c7e34a98768dbd5d68da1aa06ad9f8ac74402f088b57cc33bb9e97be23559a6494295126db6f4f41f202085c8ec32b06605cba84816412b3c27e6ee2ca3ccbfd#npm:17.0.2"],
-            ["@types/react", null],
+            ["@types/react", "npm:17.0.14"],
             ["loose-envify", "npm:1.4.0"],
             ["object-assign", "npm:4.1.1"],
             ["react", "npm:17.0.2"],
@@ -9677,6 +9677,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.14.1"],
             ["@testing-library/react", "virtual:c7e34a98768dbd5d68da1aa06ad9f8ac74402f088b57cc33bb9e97be23559a6494295126db6f4f41f202085c8ec32b06605cba84816412b3c27e6ee2ca3ccbfd#npm:12.0.0"],
             ["@types/jest", "npm:26.0.24"],
+            ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["@types/testing-library__jest-dom", "npm:5.14.0"],
             ["jest", "npm:26.6.3"],
@@ -9698,6 +9699,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.14.1"],
             ["@testing-library/react", "virtual:c7e34a98768dbd5d68da1aa06ad9f8ac74402f088b57cc33bb9e97be23559a6494295126db6f4f41f202085c8ec32b06605cba84816412b3c27e6ee2ca3ccbfd#npm:12.0.0"],
             ["@types/jest", "npm:26.0.24"],
+            ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["@types/testing-library__jest-dom", "npm:5.14.0"],
             ["jest", "npm:26.6.3"],

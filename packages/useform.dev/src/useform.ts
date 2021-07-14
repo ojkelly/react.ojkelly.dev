@@ -5,7 +5,7 @@ type ElementType<TCollection> =
     ? TArrayElement
     : TCollection extends Set<infer TSetElement>
     ? TSetElement
-    : TCollection extends Map<any, infer TMapElement>
+    : TCollection extends Map<unknown, infer TMapElement>
     ? TMapElement
     : TCollection extends { readonly [key: string]: infer TObjectElement }
     ? TObjectElement
@@ -15,8 +15,10 @@ type FormKeys<FormKey extends ElementType<string[]>> = {
   [key in FormKey]: string;
 };
 
+type InputValue = string | ReadonlyArray<string> | number | undefined;
+
 type FormValue = {
-  value: any;
+  value: InputValue;
   dirty: boolean;
   hasError: boolean;
   errorMessage: string;
@@ -28,7 +30,7 @@ type FormValues<FormKey extends ElementType<string[]>> = {
 };
 
 type InitialFormValues<FormKey extends ElementType<string[]>> = {
-  [key in FormKey]: any;
+  [key in FormKey]: InputValue;
 };
 
 type FormState<FormKey extends ElementType<string[]>> = {
@@ -38,7 +40,7 @@ type FormState<FormKey extends ElementType<string[]>> = {
   dirty: boolean;
   pending: boolean;
   hasSubmitError: boolean;
-  submitErrorMessage: any;
+  submitErrorMessage: string;
 };
 
 type ValidateResult = {
@@ -51,7 +53,7 @@ type ValidateResult = {
   // canUpdate is true when the new value can be saved
   canUpdate: boolean;
   // value allows the validate function to modify the value
-  value: any;
+  value: InputValue;
 };
 
 function createFormKeys<N extends string>(
@@ -65,6 +67,7 @@ function createFormKeys<N extends string>(
     {} as { [key in N]: string }
   );
 }
+
 const useForm = <FormKey extends ElementType<string[]>>({
   onSubmit,
   validate,
@@ -74,13 +77,19 @@ const useForm = <FormKey extends ElementType<string[]>>({
   onSubmit: (formState: FormValues<FormKey>) => void;
   validate: (
     field: keyof FormValues<FormKey>,
-    value: any,
+    value: InputValue,
     isSubmit: boolean,
     values: FormValues<FormKey>
   ) => ValidateResult;
   fields: readonly FormKey[];
   initialValues: InitialFormValues<FormKey>;
-}) => {
+}): {
+  handleSubmit: (event: { preventDefault: () => void }) => void;
+  handleInputChange: React.ChangeEventHandler<HTMLInputElement>;
+  setFormValue: (key: FormKey, value: InputValue) => void;
+  formState: FormState<FormKey>;
+  formKeys: FormKeys<FormKey>;
+} => {
   const [formKeys] = useState<FormKeys<FormKey>>(
     fields.reduce(
       (acc, key) => ({
@@ -115,14 +124,14 @@ const useForm = <FormKey extends ElementType<string[]>>({
 
   const validateAndUpdateField = (
     key: keyof FormValues<FormKey>,
-    value: any,
+    value: InputValue,
     invalidIsError: boolean
   ): ValidateResult => {
     const validateResult = validate(key, value, invalidIsError, {
       ...formState.values,
     });
 
-    setFormState((formState: { values: { [x: string]: { isValid: any } } }) => {
+    setFormState((formState: FormState<FormKey>) => {
       const canSubmit = Object.keys(formState.values).every((k: string) => {
         if (key === k) {
           return validateResult.canUpdate
@@ -161,7 +170,10 @@ const useForm = <FormKey extends ElementType<string[]>>({
     return validateResult;
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  // handleSubmit is called when the form is submitted
+  // it handles running validation on all fields and then hands off to
+  // submitCallback to look after managing the forms passed in onSubmit handler
+  const handleSubmit = (event: { preventDefault: () => void }): void => {
     if (event) {
       event.preventDefault();
     }
@@ -193,23 +205,25 @@ const useForm = <FormKey extends ElementType<string[]>>({
     }
   };
 
+  // submitCallback runs the onSubmit callback, and manages formState depending
+  // on the result.
   const submitCallback = useCallback(
-    async (formState: { pending: any; values: FormValues<FormKey> }) => {
+    async (formState: FormState<FormKey>) => {
       if (formState.pending) return;
-      setFormState((formState: any) => ({
+      setFormState((formState: FormState<FormKey>) => ({
         ...formState,
         pending: true,
       }));
       try {
         onSubmit(formState.values);
-        setFormState((formState: any) => ({
+        setFormState((formState: FormState<FormKey>) => ({
           ...formState,
           pending: false,
           hasSubmitError: false,
           submitErrorMessage: undefined,
         }));
       } catch (err) {
-        setFormState((formState: any) => ({
+        setFormState((formState: FormState<FormKey>) => ({
           ...formState,
           pending: false,
           hasSubmitError: true,
@@ -220,17 +234,27 @@ const useForm = <FormKey extends ElementType<string[]>>({
     [formState.pending]
   );
 
-  const handleInputChange = (event: {
-    persist: () => void;
-    target: { name: FormKey; value: any };
-  }) => {
-    event.persist();
-    if (formState.pending) {
-      return;
+  // handleInputChange can be attached to onChange of any standard <input />
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    if (event.currentTarget instanceof HTMLInputElement) {
+      event.persist();
+      if (formState.pending) {
+        return;
+      }
+      validateAndUpdateField(
+        event.currentTarget.name as FormKey,
+        event.currentTarget.value,
+        false
+      );
     }
-    validateAndUpdateField(event.target.name, event.target.value, false);
   };
-  const setFormValue = (key: FormKey, value: any) => {
+
+  // setFormValue is useful when you need to update a form value programatically.
+  // This could be in your own component, or based on a third party library
+  // like a CAPTCHA.
+  const setFormValue = (key: FormKey, value: InputValue) => {
     if (formState.pending) {
       return;
     }
